@@ -9,6 +9,7 @@ from .models import Course, Module, Content
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.apps import apps
 from django.forms.models import modelform_factory
+from braces.views import CsrfExemptMixin, JSONRequestResponseMixin
 
 
 class OwnerMixin:
@@ -174,3 +175,25 @@ class ModuleContentListView(TemplateResponseMixin, View):
         module = get_object_or_404(
             Module, id=module_id, course__owner=request.user)
         return self.render_to_response({'module': module})
+
+
+class ModuleOrderView(CsrfExemptMixin, JSONRequestResponseMixin, View):
+    """Представление для изменения порядка следования модулей"""
+
+    def post(self, request):
+        """POST"""
+        for id, order in self.request_json.items():
+            Module.objects.filter(
+                id=id, course__owner=request.user).update(order=order)
+        return self.render_json_response({'saved': 'OK'})
+
+
+class ContentOrderView(CsrfExemptMixin, JSONRequestResponseMixin, View):
+    """Представление для изменения порядка следования содержимого"""
+
+    def post(self, request):
+        """POST"""
+        for id, order in self.request_json.items():
+            Content.objects.filter(
+                id=id, module__course__owner=request.user).update(order=order)
+        return self.render_json_response({'saved': 'OK'})

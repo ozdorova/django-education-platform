@@ -74,3 +74,59 @@
         </div>
     {% endwith %}
 {% endblock  %}
+
+
+{% block include_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5sortable/0.13.3/html5sortable.min.js"></script>
+{% endblock  %}
+
+
+
+{% block domready %}
+    var options = {
+        method: 'POST',
+        mode: 'same-origin'
+    }
+    const moduleOrderUrl = '{% url "module_order" %}';
+
+    sortable('#modules', {
+        forcePlaceholderSize: true,
+        placeholderClass: 'placeholder'
+    })[0].addEventListener('sortupdate', function(e) {
+
+        moduleOrder = {};
+        var modules = document.querySelectorAll('#modules li');
+        modules.forEach(function (module, index) {
+            // обновить индекс модуля
+            modulesOrder[module.dataset.id] = index;
+            // обновить индекс в HTML-элементе
+            module.querySelector('.order').innerHTML = index + 1;
+            // добавить новый порядок в опции HTTP-запроса
+            options['body'] = JSON.stringify(modulesOrder);
+
+            // отправить HTTP-запрос
+            fetch(moduleOrderUrl, options)
+        });
+    });
+
+    const contentOrderUrl = '{% url "content_order" %}';
+
+    sortable('#module-contents', {
+        forcePlaceholderSize: true,
+        placeholderClass: 'placeholder'
+    })[0].addEventListener('sortupdate', function(e) {
+
+        contentOrder = {};
+        var contents = document.querySelectorAll('#module-contents div');
+        contents.forEach(function (content, index) {
+            // обновить индекс контента
+            contentOrder[content.dataset.id] = index;
+            // добавить новый порядок в опции HTTP-запроса
+            options['body'] = JSON.stringify(contentOrder);
+
+            // отправить HTTP-запрос
+            fetch(contentOrderUrl, options)
+        });
+    });
+
+{% endblock  %}
