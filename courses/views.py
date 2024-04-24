@@ -3,6 +3,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Course
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 class OwnerMixin:
@@ -21,7 +22,7 @@ class OwnerEditMixin:
         return super().form_valid(form)
 
 
-class OwnerCourseMixin(OwnerMixin):
+class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin, PermissionRequiredMixin):
     """Миксин определяющий модель, поля и перенаправление"""
     model = Course
     fields = [
@@ -32,24 +33,26 @@ class OwnerCourseMixin(OwnerMixin):
 
 class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
     """Миксин для редактирования курса. Create и Update"""
-    template_name = 'course/manage/course/form.html'
+    template_name = 'courses/manage/course/form.html'
 
 
 class ManageCourseListView(OwnerCourseMixin, ListView):
     """Представление всех курсов текущего пользователя"""
     template_name = 'courses/manage/course/list.html'
+    permission_required = 'courses.view_course'
 
 
 class CourseCreateView(OwnerCourseEditMixin, CreateView):
     """Представлене создание курса"""
-    pass
+    permission_required = 'courses.add_course'
 
 
-class CourseUpdateMixin(OwnerCourseEditMixin, UpdateView):
+class CourseUpdateView(OwnerCourseEditMixin, UpdateView):
     """Представление изменения курса"""
-    pass
+    permission_required = 'course.change_course'
 
 
 class CourseDeleteView(OwnerCourseMixin, DeleteView):
     """Представление удаления курса"""
-    template_name = 'course/manage/course/delete.html'
+    template_name = 'courses/manage/course/delete.html'
+    permission_required = 'courses.delete_course'
