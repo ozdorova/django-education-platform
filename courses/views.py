@@ -5,8 +5,10 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.base import TemplateResponseMixin, View
 from django.urls import reverse_lazy
 from .forms import ModuleFormSet
-from .models import Course
+from .models import Course, Module, Content
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.apps import apps
+from django.forms.models import modelform_factory
 
 
 class OwnerMixin:
@@ -88,3 +90,74 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
             formset.save()
             return redirect('manage_course_list')
         return self.render_to_response({'course': self.course, 'formset': formset})
+
+
+class ContentCreateUpdateView(TemplateResponseMixin, View):
+    """Представление изменения содержимого модулей"""
+
+    module = None
+    model = None
+    obj = None
+    template_name = 'courses/manage/content/form.html'
+
+    def get_model(self, model_name):
+        """Полученик модели по допустимому имени класса"""
+
+        if model_name in ['text', 'video', 'image', 'file']:
+            # получение фактического класса для имени model_name
+            return apps.get_model(app_label='courses', model_name=model_name)
+        return None
+
+    def get_form(self, model, *args, **kwargs):
+        """Создане динамической формы с помощью model_form_factory"""
+
+        # Исключаем из динамических форм поля owner, order, created, uodated
+        Form = modelform_factory(
+            model, exclude=['owner', 'order', 'created', 'updated'])
+        return Form(*args, **kwargs)
+
+    def dispatch(self, request, module_id, model_name, id=None):
+        """При обработке запроса метод добавляет атрибуты module, obj и model в экземпляр"""
+        self.module = get_object_or_404(
+            Module, id=module_id, course__owner=request.user)
+        self.model = self.get_model(model_name)
+        if id:
+            self.obj = get_object_or_404(self.model, id=id, owner=request.user)
+        return super().dispatch(request, module_id, model_name, id)
+
+    def get(self, request, module_id, model_name, id=None):
+        """GET"""
+
+        form = self.get_form(self.model, instance=self.obj)
+        return self.render_to_response({'form': form, 'object': self.obj})
+
+    def post(self, request, module_id, model_name, id=None):
+        """POST"""
+
+        form = self.get_form(self.model, instance=self.obj,
+                             data=request.POST, files=request.FILES)
+
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.owner = request.user
+            obj.save()
+            if not id:
+                # новое содержимое модуля
+                Content.objects.create(module=self.module, item=obj)
+            return redirect('module_content_list', self.module.id)
+        return self.render_to_response({'form': form, 'object': self.obj})
+
+
+class ContentDeleteView(View):
+    """Удаление содержимого"""
+
+    def post(self, request, id):
+        """POST"""
+
+        content = get_object_or_404(
+            Content, id=id, module__course__owner=request.user)
+
+        module = content.module
+        content.item.delete()
+        content.delete()
+        return redirect('module_content_list', module.id)
