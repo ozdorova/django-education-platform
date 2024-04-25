@@ -10,6 +10,7 @@ django-braces = "==1.15.0"
 django-embed-video = "==1.4.4"
 pymemcache = "==3.5.2"
 django-debug-toolbar = "==3.6.0"
+redis = "==4.3.4"
 
 [dev-packages]
 
