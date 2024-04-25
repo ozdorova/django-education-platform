@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e03faddcab8bc667b9c922c12f35737ed14496c46eed03609faca1a0a6e1fb71"
+            "sha256": "a1a563a559a54702b796668da459626db7450cbe25f3bd71e525c8f9eaaea4d2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -31,6 +31,15 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==4.0.3"
+        },
+        "attrs": {
+            "hashes": [
+                "sha256:935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30",
+                "sha256:99b87a485a5820b23b879f04c2305b44b951b502fd64be915879d77a7e8fc6f1"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==23.2.0"
         },
         "certifi": {
             "hashes": [
@@ -177,6 +186,15 @@
             ],
             "index": "pypi",
             "version": "==1.4.4"
+        },
+        "django-redisboard": {
+            "hashes": [
+                "sha256:23fc721ccf042d0b84b5eadd76b34b8e2f48f71e4842322a046dac1a29187890",
+                "sha256:955734d956987e478954b3daca0bc6aa1d11c896e10203f7e93ea4da0244edb2"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==8.3.0"
         },
         "idna": {
             "hashes": [
