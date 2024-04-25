@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-from django.conf.global_settings import INTERNAL_IPS, LOGIN_REDIRECT_URL
+from django.conf.global_settings import CACHE_MIDDLEWARE_ALIAS, CACHE_MIDDLEWARE_KEY_PREFIX, CACHE_MIDDLEWARE_SECONDS, INTERNAL_IPS, LOGIN_REDIRECT_URL
 from django.urls import reverse_lazy
 import os
 
@@ -54,7 +54,9 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware', # кеширование сайта целиком
     'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -146,3 +148,8 @@ CACHES = {
         'LOCATION': "127.0.0.1:11211",
     }
 }
+
+
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 60 * 15  # 15 минут
+CACHE_MIDDLEWARE_KEY_PREFIX = 'educa'
