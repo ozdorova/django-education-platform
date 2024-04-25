@@ -13,6 +13,7 @@ from django.forms.models import modelform_factory
 from braces.views import CsrfExemptMixin, JSONRequestResponseMixin
 from django.db.models import Count
 from students.forms import CourseEnrollForm
+from django.core.cache import cache
 
 
 class OwnerMixin:
@@ -210,12 +211,29 @@ class CourseListView(TemplateResponseMixin, View):
 
     def get(self, request, subject=None):
         """GET"""
-        subjects = Subject.objects.annotate(total_courses=Count('courses'))
-        courses = Course.objects.annotate(total_modules=Count('modules'))
+
+        subjects = cache.get('all_subjects')
+        if not subjects:
+            subjects = Subject.objects.annotate(total_courses=Count('courses'))
+            cache.set('all_subjects', subjects)
+
+        all_courses = Course.objects.annotate(total_modules=Count('modules'))
 
         if subject:
+            # если предмет указан, то создается динамический ключ для кеширования
             subject = get_object_or_404(Subject, slug=subject)
-            courses = courses.filter(subject=subject)
+            key = f'subject_{subject.id}_courses'
+            courses = cache.get(key)
+            if not courses:
+                courses = all_courses.filter(subject=subject)
+                cache.set(key, courses)
+        else:
+            # если предмет не указан
+            courses = cache.get('all_courses')
+            if not courses:
+                courses = all_courses
+                cache.set('all_courses', courses)
+
         return self.render_to_response({'subjects': subjects, 'subject': subject, 'courses': courses})
 
 

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-from django.conf.global_settings import LOGIN_REDIRECT_URL
+from django.conf.global_settings import INTERNAL_IPS, LOGIN_REDIRECT_URL
 from django.urls import reverse_lazy
 import os
 
@@ -30,6 +30,10 @@ DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+    'localhost',
+]
 
 # Application definition
 
@@ -43,9 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'students.apps.StudentsConfig',
     'embed_video',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -132,3 +138,11 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_REDIRECT_URL = reverse_lazy('student_course_list')
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': "127.0.0.1:11211",
+    }
+}
