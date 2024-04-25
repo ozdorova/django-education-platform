@@ -13,6 +13,7 @@ django-debug-toolbar = "==3.6.0"
 redis = "==4.3.4"
 django-redisboard = "==8.3.0"
 attrs = "*"
+djangorestframework = "==3.13.1"
 
 [dev-packages]
 
