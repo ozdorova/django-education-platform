@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'redisboard',
     'rest_framework',
+    'chat',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -85,6 +87,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'educa.wsgi.application'
 
+# для channels
+ASGI_APPLICATION = 'educa.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
