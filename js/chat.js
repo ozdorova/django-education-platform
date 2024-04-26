@@ -1,13 +1,30 @@
 const courseId = JSON.parse(
-    document.getElementById('course_id').textContent
+    document.getElementById('course-id').textContent
 );
+
+const requestUser = JSON.parse(
+    document.getElementById('request-user').textContent
+);
+
 const url = 'ws://' + window.location.host + '/ws/chat/room/' + courseId + '/';
 const chatSocket = new WebSocket(url);
 
 chatSocket.onmessage = function(event) {
     const data = JSON.parse(event.data);
     const chat = document.getElementById('chat');
-    chat.innerHTML += '<div class="message">' + data.message + '</div>';
+
+    const dateOptions = {hour: 'numeric', minute: 'numeric',};
+    const datetime = new Date(data.datetime).toLocaleString('ru', dateOptions);
+    const isMe = data.user === requestUser;
+    const source = isMe ? 'me' : 'other';
+    const name = isMe ? 'Me' : data.user;
+
+
+
+    chat.innerHTML += '<div class="message '+ source + '">' + 
+    '<strong>' + name + '</strong>' + '<span class="date">' + 
+    datetime + '</span><br>' + data.message + '</div>';
+
     chat.scrollTop = chat.scrollHeight;
 };
 
