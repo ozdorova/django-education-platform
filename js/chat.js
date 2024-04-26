@@ -1,26 +1,3 @@
-{% extends 'base.html' %}
-
-{% block title %}
-    Чат курса {{  cource.title }}
-{% endblock  %}
-
-{% block content %}
-    <div id="chat">
-    </div>
-    <div id="chat-input">
-        <input type="text" id="chat-message-input">
-        <input type="submit" id="chat-message-submit" value="Отправить">
-    </div>
-{% endblock  %}
-
-
-{% block include_js %}
-    {{ course.id|json_script:"course_id" }}
-{% endblock  %}
-
-
-{% block domready %}
-
 const courseId = JSON.parse(
     document.getElementById('course_id').textContent
 );
@@ -64,6 +41,3 @@ input.addEventListener('keypress', function(event) {
     }
 });
 input.focus();
-
-
-{% endblock  %}
