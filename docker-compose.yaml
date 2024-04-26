@@ -20,7 +20,7 @@ services:
 
   web:
     build: .
-    command: ["./wait-for-it.sh", "db:5432", "--", "python", "/code/manage.py", "runserver", "0.0.0.0:8000"]
+    command: ["./wait-for-it.sh", "db:5432", "--", "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
     restart: always
     volumes:
       - .:/code
@@ -31,6 +31,17 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    env_file:
+      - .env
     depends_on:
       - db
       - cache
+  
+  nginx:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./config/nginx:/etc/nginx/templates
+      - .:/code
+    ports:
+      - "80:80"
