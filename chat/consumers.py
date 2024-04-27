@@ -25,7 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         """Отключение от чата"""
         # покинуть группу чат комнаты
         await self.channel_layer.group_discard(
-            self.room_group_name, self.channel_layer)
+            self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
         """Получить сообщение из websocket"""
