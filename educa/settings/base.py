@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-from django.conf.global_settings import CACHE_MIDDLEWARE_ALIAS, CACHE_MIDDLEWARE_KEY_PREFIX, CACHE_MIDDLEWARE_SECONDS, INTERNAL_IPS, LOGIN_REDIRECT_URL, STATIC_ROOT
+from django.conf.global_settings import CACHE_MIDDLEWARE_ALIAS, CACHE_MIDDLEWARE_KEY_PREFIX, CACHE_MIDDLEWARE_SECONDS, INTERNAL_IPS, LOGIN_REDIRECT_URL, SECRET_KEY, STATIC_ROOT
 from django.urls import reverse_lazy
 import os
 
