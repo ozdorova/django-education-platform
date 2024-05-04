@@ -10,7 +10,7 @@ ADMINS = [
     ('Mikhail B.', 'haxboxmiha@gmail.com'),
 ]
 
-ALLOWED_HOSTS = ['.educaproject.com']
+ALLOWED_HOSTS = [f'.{os.environ.get('NGINX_HOST')}']
 
 DATABASES = {
     'default': {
@@ -18,8 +18,8 @@ DATABASES = {
         'NAME': os.environ.get('POSTGRES_DB'),
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'db',
-        'PORT': 5432,
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'PORT': os.environ.get('POSTGRES_PORT'),
     }
 }
 

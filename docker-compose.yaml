@@ -27,6 +27,7 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - NGINX_HOST
       - DJANGO_SETTINGS_MODULE=educa.settings.prod
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -38,17 +39,24 @@ services:
       - cache
   
   nginx:
-    image: nginx:latest
-    restart: always
-    volumes:
-      - ./config/nginx:/etc/nginx/templates
-      - .:/code
-      # - ./config/certbot/conf:/etc/letsencrypt
-      # - ./config/certbot/www:/var/www/certbot
+    image: nginx:1.23-alpine
     ports:
-      - "80:80"
-      - "443:443"
-  
+      - 80:80
+      - 443:443
+    restart: always
+    environment:
+      - NGINX_HOST
+    volumes:
+      - ./nginx/first_start/:/etc/nginx/templates/:ro
+      # - ./nginx/templates/:/etc/nginx/templates/:ro
+      - ./certbot/www:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
+  certbot:
+    image: certbot/certbot:v2.5.0
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+
   daphne:
     build: .
     working_dir: /code/
@@ -64,12 +72,3 @@ services:
     depends_on:
       - db
       - cache
-
-  
-  # certbot:
-  #   image: certbot/certbot
-  #   volumes:
-  #     - ./config/certbot/conf:/etc/letsencrypt
-  #     - ./config/certbot/www:/var/www/certbot
-  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-  #   command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
