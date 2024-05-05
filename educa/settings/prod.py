@@ -10,7 +10,7 @@ ADMINS = [
     ('Mikhail B.', 'haxboxmiha@gmail.com'),
 ]
 
-ALLOWED_HOSTS = ['.django-education-platform.ru']
+ALLOWED_HOSTS = ['.django-education-platform.ru', '5.35.87.48']
 
 DATABASES = {
     'default': {
