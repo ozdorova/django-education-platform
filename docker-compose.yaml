@@ -47,8 +47,8 @@ services:
     environment:
       - NGINX_HOST
     volumes:
-      - ./nginx/first_start/:/etc/nginx/templates/:ro
-      # - ./nginx/templates/:/etc/nginx/templates/:ro
+      # - ./nginx/first_start/:/etc/nginx/templates/:ro
+      - ./nginx/templates/:/etc/nginx/templates/:ro
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
   certbot:
